@@ -11,11 +11,81 @@ function Exam() {
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(0);
 
-  // ✅ Check attempts and fetch questions safely
+  // ✅ Submit exam
+  const submitExam = useCallback(async () => {
+    let score = 0;
+
+    questions.forEach((q) => {
+      if (answers[q.id] === q.correct_answer) score++;
+    });
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert("User not logged in");
+      return;
+    }
+
+    const { data: examData, error: examError } = await supabase
+      .from("exams")
+      .select("title")
+      .eq("id", id)
+      .single();
+
+    if (examError) {
+      console.log("Error fetching exam title:", examError);
+      return;
+    }
+
+    const { error } = await supabase.from("results").insert([
+      {
+        user_id: user.id,
+        exam_id: id,
+        exam_title: examData.title,
+        score,
+        attempt_date: new Date(),
+      },
+    ]);
+
+    if (error) {
+      console.log(error);
+      alert("Error saving result");
+      return;
+    }
+
+    navigate("/result", { state: { score, total: questions.length } });
+
+  }, [answers, questions, id, navigate]);
+
+  // ✅ Timer
+  useEffect(() => {
+
+    if (timeLeft <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+
+        if (prev <= 1) {
+          clearInterval(timer);
+          submitExam();
+          return 0;
+        }
+
+        return prev - 1;
+
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+
+  }, [timeLeft, submitExam]);
+
+  // ✅ Check attempts and load questions
   useEffect(() => {
     let isMounted = true;
 
-    const safeCheckAttempt = async () => {
+    const loadExam = async () => {
+
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
@@ -37,102 +107,40 @@ function Exam() {
         return;
       }
 
-      // Fetch questions & exam duration inside useEffect
-      const fetchQuestions = async () => {
-        const { data: questionsData } = await supabase
-          .from("questions")
-          .select("*")
-          .eq("exam_id", id);
+      const { data: questionsData } = await supabase
+        .from("questions")
+        .select("*")
+        .eq("exam_id", id);
 
-        if (!isMounted) return;
-        setQuestions(questionsData);
+      if (!isMounted) return;
 
-        const { data: examData } = await supabase
-          .from("exams")
-          .select("duration")
-          .eq("id", id)
-          .single();
+      setQuestions(questionsData || []);
 
-        if (!isMounted) return;
-        if (examData) setTimeLeft(examData.duration * 60);
-      };
+      const { data: examData } = await supabase
+        .from("exams")
+        .select("duration")
+        .eq("id", id)
+        .single();
 
-      fetchQuestions();
+      if (!isMounted) return;
+
+      if (examData) setTimeLeft(examData.duration * 60);
     };
 
-    safeCheckAttempt();
+    loadExam();
 
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
+
   }, [navigate, id]);
-
-  // ✅ Timer logic
-  useEffect(() => {
-  if (timeLeft <= 0) return;
-
-  const timer = setInterval(() => {
-    setTimeLeft(prev => {
-      if (prev <= 1) {
-        clearInterval(timer);
-        submitExam();
-        return 0;
-      }
-      return prev - 1;
-    });
-  }, 1000);
-  return () => clearInterval(timer);
-  }, [timeLeft, submitExam]);
-
-  // ✅ Submit exam
- const submitExam = useCallback(async () => {
-  let score = 0;
-
-  questions.forEach((q) => {
-    if (answers[q.id] === q.correct_answer) score++;
-  });
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    alert("User not logged in");
-    return;
-  }
-
-  const { data: examData, error: examError } = await supabase
-    .from("exams")
-    .select("title")
-    .eq("id", id)
-    .single();
-
-  if (examError) {
-    console.log("Error fetching exam title:", examError);
-    return;
-  }
-
-  const { error } = await supabase.from("results").insert([
-    {
-      user_id: user.id,
-      exam_id: id,
-      exam_title: examData.title,
-      score,
-      attempt_date: new Date(),
-    },
-  ]);
-
-  if (error) {
-    console.log(error);
-    alert("Error saving result");
-    return;
-  }
-
-  navigate("/result", { state: { score, total: questions.length } });
-
-}, [answers, questions, id, navigate]);
 
   return (
     <>
       <Navbar />
+
       <div className="min-h-screen bg-gray-100 p-8">
-        {/* TIMER */}
+
         <div className="mb-6 text-right text-red-600 font-bold text-lg">
           Time Left: {Math.floor(timeLeft / 60)}:
           {String(timeLeft % 60).padStart(2, "0")}
@@ -140,17 +148,19 @@ function Exam() {
 
         <h1 className="text-2xl font-bold mb-6">Exam</h1>
 
-        {questions.map(q => (
+        {questions.map((q) => (
           <div key={q.id} className="bg-white p-6 rounded-xl shadow mb-6">
             <p className="font-semibold mb-4">{q.question_text}</p>
 
-            {["option_a", "option_b", "option_c", "option_d"].map(opt => (
+            {["option_a", "option_b", "option_c", "option_d"].map((opt) => (
               <label key={opt} className="block mb-2">
                 <input
                   type="radio"
                   name={q.id}
                   value={opt.slice(-1).toUpperCase()}
-                  onChange={e => setAnswers({ ...answers, [q.id]: e.target.value })}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [q.id]: e.target.value })
+                  }
                 />
                 <span className="ml-2">{q[opt]}</span>
               </label>
@@ -164,6 +174,7 @@ function Exam() {
         >
           Submit Exam
         </button>
+
       </div>
     </>
   );
