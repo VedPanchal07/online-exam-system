@@ -8,13 +8,14 @@ function MyResults() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // ✅ Fetch results safely on mount
   useEffect(() => {
     let isMounted = true;
 
     const safeFetchResults = async () => {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
 
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate("/");
         return;
@@ -35,11 +36,9 @@ function MyResults() {
 
       if (!isMounted) return;
 
-      if (error) {
-        console.log("Error fetching results:", error);
-      } else {
-        setResults(data || []);
-      }
+      if (error) console.log("Error fetching results:", error);
+      else setResults(data || []);
+
       setLoading(false);
     };
 
@@ -47,39 +46,6 @@ function MyResults() {
 
     return () => { isMounted = false };
   }, [navigate]);
-
-  async function fetchResults() {
-    setLoading(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      navigate("/");
-      return;
-    }
-
-    // Fetch results along with exam titles
-    const { data, error } = await supabase
-      .from("results")
-      .select(`
-        id,
-        score,
-        user_id,
-        attempt_date,
-        exam_id,
-        exam_title
-      `)
-      .eq("user_id", user.id)
-      .order("attempt_date", { ascending: false });
-
-    if (error) {
-      console.log("Error fetching results:", error);
-    } else {
-      setResults(data || []);
-    }
-    setLoading(false);
-  }
 
   return (
     <>
@@ -94,7 +60,7 @@ function MyResults() {
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((r) => (
+          {results.map(r => (
             <div
               key={r.id}
               className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
