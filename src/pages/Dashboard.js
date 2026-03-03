@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseclient";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+
 function Dashboard() {
   const [exams, setExams] = useState([]);
   const navigate = useNavigate();

@@ -11,9 +11,40 @@ function Exam() {
   const [timeLeft, setTimeLeft] = useState(0);
 
   // ✅ Call checkAttempt on page load
+  // ✅ Safe checkAttempt on page load
   useEffect(() => {
-    checkAttempt();
-  }, []);
+    let isMounted = true;
+
+    const safeCheckAttempt = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/");
+        return;
+      }
+
+      // Check attempts
+      const { data } = await supabase
+        .from("results")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("exam_id", id);
+
+      if (!isMounted) return;
+
+      if (data.length >= 5) {
+        alert("You have already attempted this exam 5 times.");
+        navigate("/dashboard");
+        return;
+      }
+
+      fetchQuestions();
+    };
+
+    safeCheckAttempt();
+
+    return () => { isMounted = false };
+  }, [navigate, id]);
 
   // ✅ Timer logic
   useEffect(() => {

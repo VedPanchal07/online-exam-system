@@ -9,8 +9,44 @@ function MyResults() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchResults();
-  }, []);
+    let isMounted = true;
+
+    const safeFetchResults = async () => {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate("/");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("results")
+        .select(`
+          id,
+          score,
+          user_id,
+          attempt_date,
+          exam_id,
+          exam_title
+        `)
+        .eq("user_id", user.id)
+        .order("attempt_date", { ascending: false });
+
+      if (!isMounted) return;
+
+      if (error) {
+        console.log("Error fetching results:", error);
+      } else {
+        setResults(data || []);
+      }
+      setLoading(false);
+    };
+
+    safeFetchResults();
+
+    return () => { isMounted = false };
+  }, [navigate]);
 
   async function fetchResults() {
     setLoading(true);
