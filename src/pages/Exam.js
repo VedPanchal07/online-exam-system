@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseclient";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -83,48 +83,50 @@ function Exam() {
   }, [timeLeft, submitExam]);
 
   // ✅ Submit exam
-  async function submitExam() {
-    let score = 0;
+ const submitExam = useCallback(async () => {
+  let score = 0;
 
-    questions.forEach(q => {
-      if (answers[q.id] === q.correct_answer) score++;
-    });
+  questions.forEach((q) => {
+    if (answers[q.id] === q.correct_answer) score++;
+  });
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      alert("User not logged in");
-      return;
-    }
+  const { data: { user } } = await supabase.auth.getUser();
 
-    const { data: examData, error: examError } = await supabase
-      .from("exams")
-      .select("title")
-      .eq("id", id)
-      .single();
-
-    if (examError) {
-      console.log("Error fetching exam title:", examError);
-      return;
-    }
-
-    const { error } = await supabase.from("results").insert([
-      {
-        user_id: user.id,
-        exam_id: id,
-        exam_title: examData.title,
-        score,
-        attempt_date: new Date(),
-      },
-    ]);
-
-    if (error) {
-      console.log(error);
-      alert("Error saving result");
-      return;
-    }
-
-    navigate("/result", { state: { score, total: questions.length } });
+  if (!user) {
+    alert("User not logged in");
+    return;
   }
+
+  const { data: examData, error: examError } = await supabase
+    .from("exams")
+    .select("title")
+    .eq("id", id)
+    .single();
+
+  if (examError) {
+    console.log("Error fetching exam title:", examError);
+    return;
+  }
+
+  const { error } = await supabase.from("results").insert([
+    {
+      user_id: user.id,
+      exam_id: id,
+      exam_title: examData.title,
+      score,
+      attempt_date: new Date(),
+    },
+  ]);
+
+  if (error) {
+    console.log(error);
+    alert("Error saving result");
+    return;
+  }
+
+  navigate("/result", { state: { score, total: questions.length } });
+
+}, [answers, questions, id, navigate]);
 
   return (
     <>
