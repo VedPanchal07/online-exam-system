@@ -67,21 +67,20 @@ function Exam() {
 
   // ✅ Timer logic
   useEffect(() => {
-    if (timeLeft <= 0) return;
+  if (timeLeft <= 0) return;
 
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          submitExam(); // Auto-submit
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft]);
+  const timer = setInterval(() => {
+    setTimeLeft(prev => {
+      if (prev <= 1) {
+        clearInterval(timer);
+        submitExam();
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+  return () => clearInterval(timer);
+  }, [timeLeft, submitExam]);
 
   // ✅ Submit exam
   async function submitExam() {
