@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
 import useCountUp from "../hooks/useCountUp";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function Dashboard() {
+  const { redirect, redirecting } = useRedirect();
   const [exams, setExams] = useState([]);
   const [stats, setStats] = useState({
     exams: 0,
@@ -58,6 +61,7 @@ function Dashboard() {
 
   return (
     <>
+      {redirecting && <RedirectLoader />}
       <Background/>
       <Navbar />
 
@@ -98,7 +102,7 @@ function Dashboard() {
             </div>
 
             <button
-              onClick={() => navigate("/my-results")}
+              onClick={() => redirect("/my-results")}
               className="btn-3d bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 shadow-lg"
             >
               View My Results
@@ -117,7 +121,7 @@ function Dashboard() {
                 <h3 className="text-xl font-semibold mb-2">{exam.title}</h3>
                 <p className="text-gray-600 mb-4">Duration: {exam.duration} minutes</p>
                 <button
-                  onClick={() => navigate(`/exam/${exam.id}`)}
+                  onClick={() => redirect(`/exam/${exam.id}`)}
                   className="w-full btn-3d bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold"
                 >
                   Start Exam

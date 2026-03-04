@@ -3,8 +3,11 @@ import { supabase } from "../supabaseclient";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function Login() {
+  const { redirect, redirecting } = useRedirect();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,12 +23,13 @@ function Login() {
     if (error) {
       alert(error.message);
     } else {
-      navigate("/dashboard");
+      redirect("/dashboard");
     }
   }
 
   return (
     <>
+      {redirecting && <RedirectLoader />}
     <Background/>
       <Navbar />
 

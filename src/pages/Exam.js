@@ -3,8 +3,11 @@ import { supabase } from "../supabaseclient";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function Exam() {
+  const { redirect, redirecting } = useRedirect();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -104,7 +107,7 @@ function Exam() {
 
       if (data.length >= 5) {
         alert("You have already attempted this exam 5 times.");
-        navigate("/dashboard");
+        redirect("/dashboard");
         return;
       }
 
@@ -138,6 +141,7 @@ function Exam() {
 
   return (
 <>
+    {redirecting && <RedirectLoader />}
 <Background/>
 <Navbar />
 

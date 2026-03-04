@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
 import Loader from "../components/Loader";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function MyResults() {
-
+  const { redirect, redirecting } = useRedirect();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,7 @@ function MyResults() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        navigate("/");
+        redirect("/");
         return;
       }
 
@@ -57,6 +59,7 @@ function MyResults() {
 
   return (
     <>
+    {redirecting && <RedirectLoader />}
     <Background/>
       <Navbar />
 

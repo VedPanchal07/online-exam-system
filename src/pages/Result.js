@@ -1,8 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function Result() {
+  const { redirect, redirecting } = useRedirect();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,6 +17,7 @@ function Result() {
 
   return (
     <>
+    {redirecting && <RedirectLoader />}
     <Background/>
       <Navbar />
 
@@ -80,14 +84,14 @@ function Result() {
           <div className="flex justify-center gap-4">
 
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => redirect("/dashboard")}
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
             >
               Go to Dashboard
             </button>
 
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => redirect(-1)}
               className="bg-gray-200 px-6 py-3 rounded-lg hover:bg-gray-300 transition"
             >
               Review

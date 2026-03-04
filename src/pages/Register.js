@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { supabase } from "../supabaseclient";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, redirect } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
+import useRedirect from "../hooks/useRedirect";
+import RedirectLoader from "../components/RedirectLoader";
 
 function Register() {
+  const { redirect, redirecting } = useRedirect();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -22,12 +25,13 @@ function Register() {
       alert(error.message);
     } else {
       alert("Registration successful! Please check your email to verify.");
-      navigate("/");
+      redirect("/");
     }
   }
 
   return (
     <>
+    {redirecting && <RedirectLoader />}
     <Background/>
       <Navbar />
 
