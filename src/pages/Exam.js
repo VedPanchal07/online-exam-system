@@ -137,7 +137,7 @@ function Exam() {
       isMounted = false;
     };
 
-  }, [navigate, id]);
+  }, [navigate, id, redirect]);
 
   return (
 <>
