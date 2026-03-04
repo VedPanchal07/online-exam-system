@@ -19,7 +19,6 @@ function Navbar() {
     if (user) {
       setUserEmail(user.email);
 
-      // 🔥 Change this email to your admin email
       if (user.email === "vedp62821@gmail.com") {
         setIsAdmin(true);
       }
@@ -32,55 +31,63 @@ function Navbar() {
   }
 
   return (
-    <div className="bg-white shadow p-4 flex justify-between items-center">
-      
-      {/* Left Side */}
-      <div className="flex gap-6 items-center">
-        <h1
-          className="text-xl font-bold cursor-pointer"
-          onClick={() => navigate("/dashboard")}
-        >
-          Online Exam System
-        </h1>
+    <nav className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-lg">
 
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="text-gray-600 hover:text-black"
-        >
-          Dashboard
-        </button>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
-        <button
-          onClick={() => navigate("/my-results")}
-          className="text-gray-600 hover:text-black"
-        >
-          My Results
-        </button>
+        {/* LEFT SIDE */}
+        <div className="flex items-center gap-8 text-white">
 
-        {isAdmin && (
-          <button
-            onClick={() => navigate("/admin")}
-            className="text-blue-600 font-semibold"
+          <h1
+            className="text-2xl font-bold cursor-pointer tracking-wide"
+            onClick={() => navigate("/dashboard")}
           >
-            Admin
+            Online Exam System
+          </h1>
+
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="hover:text-gray-200 transition"
+          >
+            Dashboard
           </button>
-        )}
+
+          <button
+            onClick={() => navigate("/my-results")}
+            className="hover:text-gray-200 transition"
+          >
+            My Results
+          </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => navigate("/admin")}
+              className="bg-white text-indigo-600 px-3 py-1 rounded-lg font-semibold hover:bg-gray-200 transition"
+            >
+              Admin
+            </button>
+          )}
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="flex items-center gap-6">
+
+          <div className="bg-white/20 px-4 py-1 rounded-lg text-white text-sm">
+            {userEmail}
+          </div>
+
+          <button
+            onClick={logout}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+
+        </div>
+
       </div>
 
-      {/* Right Side */}
-      <div className="flex gap-4 items-center">
-        <span className="text-sm text-gray-600">
-          {userEmail}
-        </span>
-
-        <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
+    </nav>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Background from "../components/Background";
 
 function Result() {
   const location = useLocation();
@@ -13,6 +14,7 @@ function Result() {
 
   return (
     <>
+    <Background/>
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">

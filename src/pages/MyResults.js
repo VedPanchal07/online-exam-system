@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseclient";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Background from "../components/Background";
+import Loader from "../components/Loader";
 
 function MyResults() {
 
@@ -55,6 +57,7 @@ function MyResults() {
 
   return (
     <>
+    <Background/>
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -68,12 +71,11 @@ function MyResults() {
           </h1>
 
           {/* Loading */}
-          {loading && (
-            <div className="flex justify-center mt-20">
-              <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-500"></div>
-            </div>
-          )}
-
+         {loading && (
+          <div className="flex justify-center items-center mt-20">
+            <Loader />
+          </div>
+        )}
           {/* Empty State */}
           {!loading && results.length === 0 && (
             <div className="bg-white p-10 rounded-2xl shadow text-center">

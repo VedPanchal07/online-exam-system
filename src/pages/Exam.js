@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseclient";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Background from "../components/Background";
 
 function Exam() {
   const { id } = useParams();
@@ -137,6 +138,7 @@ function Exam() {
 
   return (
 <>
+<Background/>
 <Navbar />
 
 <div className="min-h-screen bg-gray-100">
@@ -160,13 +162,13 @@ Online Exam
 
 
 {/* EXAM CONTENT */}
-<div className="max-w-5xl mx-auto p-6">
+<div className="max-w-6xl mx-auto p-6">
 
 {questions.map((q, index) => (
 
 <div
 key={q.id}
-className="bg-white p-6 rounded-2xl shadow-md mb-6"
+className="glass-card exam-card p-6 mb-8"
 >
 
 {/* QUESTION NUMBER */}
@@ -191,7 +193,7 @@ return (
 
 <label
 key={opt}
-className={`block border rounded-lg p-3 cursor-pointer transition hover:bg-gray-50
+className={`block border rounded-xl p-3 cursor-pointer transition hover:scale-[1.01] hover:bg-blue-50
 ${answers[q.id] === value ? "border-blue-500 bg-blue-50" : "border-gray-200"}
 `}
 >
@@ -227,7 +229,7 @@ setAnswers({ ...answers, [q.id]: e.target.value })
 
 <button
 onClick={submitExam}
-className="bg-green-500 text-white px-8 py-3 rounded-xl text-lg font-semibold hover:bg-green-600 shadow-md transition"
+className="btn-3d bg-green-500 text-white px-10 py-3 rounded-xl text-lg font-semibold hover:bg-green-600 shadow-lg"
 >
 Submit Exam
 </button>

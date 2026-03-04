@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../supabaseclient";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Background from "../components/Background";
 
 function Register() {
   const navigate = useNavigate();
@@ -27,11 +28,12 @@ function Register() {
 
   return (
     <>
+    <Background/>
       <Navbar />
 
-      <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center px-6">
 
-        <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md">
+        <div className="grid md:grid-cols-2 glass-card overflow-hidden max-w-5xl w-full">
 
           <h2 className="text-3xl font-bold text-center mb-2">
             Create Account

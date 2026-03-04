@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabaseclient";
 import Navbar from "../components/Navbar";
+import Background from "../components/Background";
 
 function AdminPanel() {
 
@@ -39,6 +40,7 @@ function AdminPanel() {
 
   return (
     <>
+    <Background/>
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 py-10 px-4">
