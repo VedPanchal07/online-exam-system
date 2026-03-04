@@ -52,7 +52,7 @@ function MyResults() {
 
     return () => { isMounted = false };
 
-  }, [redirect]);
+  }, []);
 
   return (
     <>
@@ -71,7 +71,7 @@ function MyResults() {
           </h1>
 
           {/* Loading */}
-         {loading && (
+         {loading && results.length === 0 && (
           <div className="flex justify-center items-center mt-20">
             <Loader />
           </div>
