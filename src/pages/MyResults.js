@@ -12,47 +12,44 @@ function MyResults() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+  let isMounted = true;
 
-    let isMounted = true;
+  const safeFetchResults = async () => {
+    setLoading(true);
 
-    const safeFetchResults = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
 
-      setLoading(true);
+    if (!user) {
+      redirect("/"); // ✅ safe to call once
+      return;
+    }
 
-      const { data: { user } } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from("results")
+      .select(`
+        id,
+        score,
+        user_id,
+        attempt_date,
+        exam_id,
+        exam_title
+      `)
+      .eq("user_id", user.id)
+      .order("attempt_date", { ascending: false });
 
-      if (!user) {
-        redirect("/");
-        return;
-      }
+    if (!isMounted) return;
 
-      const { data, error } = await supabase
-        .from("results")
-        .select(`
-          id,
-          score,
-          user_id,
-          attempt_date,
-          exam_id,
-          exam_title
-        `)
-        .eq("user_id", user.id)
-        .order("attempt_date", { ascending: false });
+    if (error) console.log("Error fetching results:", error);
+    else setResults(data || []);
 
-      if (!isMounted) return;
+    setLoading(false);
+  };
 
-      if (error) console.log("Error fetching results:", error);
-      else setResults(data || []);
+  safeFetchResults();
 
-      setLoading(false);
-
-    };
-
-    safeFetchResults();
-
-    return () => { isMounted = false };
-
-  }, []);
+  return () => { isMounted = false };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []); // <-- Tell ESLint to ignore redirect dependency
 
   return (
     <>
