@@ -49,7 +49,7 @@ function MyResults() {
 
   return () => { isMounted = false };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []); // <-- Tell ESLint to ignore redirect dependency
+}, []); // <-- Tell ESLint to ignore redirect dependency just for this effect, since we only want to call it once on mount
 
   return (
     <>
