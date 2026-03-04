@@ -136,48 +136,110 @@ function Exam() {
   }, [navigate, id]);
 
   return (
-    <>
-      <Navbar />
+<>
+<Navbar />
 
-      <div className="min-h-screen bg-gray-100 p-8">
+<div className="min-h-screen bg-gray-100">
 
-        <div className="mb-6 text-right text-red-600 font-bold text-lg">
-          Time Left: {Math.floor(timeLeft / 60)}:
-          {String(timeLeft % 60).padStart(2, "0")}
-        </div>
+{/* TOP BAR */}
+<div className="bg-white shadow-md sticky top-0 z-10">
+<div className="max-w-5xl mx-auto flex justify-between items-center p-4">
 
-        <h1 className="text-2xl font-bold mb-6">Exam</h1>
+<h1 className="text-xl font-bold">
+Online Exam
+</h1>
 
-        {questions.map((q) => (
-          <div key={q.id} className="bg-white p-6 rounded-xl shadow mb-6">
-            <p className="font-semibold mb-4">{q.question_text}</p>
+<div className="bg-red-100 text-red-600 px-4 py-2 rounded-lg font-semibold">
+⏱ {Math.floor(timeLeft / 60)}:
+{String(timeLeft % 60).padStart(2, "0")}
+</div>
 
-            {["option_a", "option_b", "option_c", "option_d"].map((opt) => (
-              <label key={opt} className="block mb-2">
-                <input
-                  type="radio"
-                  name={q.id}
-                  value={opt.slice(-1).toUpperCase()}
-                  onChange={(e) =>
-                    setAnswers({ ...answers, [q.id]: e.target.value })
-                  }
-                />
-                <span className="ml-2">{q[opt]}</span>
-              </label>
-            ))}
-          </div>
-        ))}
+</div>
+</div>
 
-        <button
-          onClick={submitExam}
-          className="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600"
-        >
-          Submit Exam
-        </button>
 
-      </div>
-    </>
-  );
+
+{/* EXAM CONTENT */}
+<div className="max-w-5xl mx-auto p-6">
+
+{questions.map((q, index) => (
+
+<div
+key={q.id}
+className="bg-white p-6 rounded-2xl shadow-md mb-6"
+>
+
+{/* QUESTION NUMBER */}
+<h2 className="text-lg font-semibold mb-3">
+Question {index + 1}
+</h2>
+
+<p className="text-gray-800 font-medium mb-4">
+{q.question_text}
+</p>
+
+
+
+{/* OPTIONS */}
+<div className="space-y-3">
+
+{["option_a","option_b","option_c","option_d"].map((opt) => {
+
+const value = opt.slice(-1).toUpperCase();
+
+return (
+
+<label
+key={opt}
+className={`block border rounded-lg p-3 cursor-pointer transition hover:bg-gray-50
+${answers[q.id] === value ? "border-blue-500 bg-blue-50" : "border-gray-200"}
+`}
+>
+
+<input
+type="radio"
+name={q.id}
+value={value}
+className="mr-3"
+onChange={(e) =>
+setAnswers({ ...answers, [q.id]: e.target.value })
+}
+/>
+
+{q[opt]}
+
+</label>
+
+);
+
+})}
+
+</div>
+
+</div>
+
+))}
+
+
+
+{/* SUBMIT SECTION */}
+<div className="text-center mt-10">
+
+<button
+onClick={submitExam}
+className="bg-green-500 text-white px-8 py-3 rounded-xl text-lg font-semibold hover:bg-green-600 shadow-md transition"
+>
+Submit Exam
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</>
+);
 }
 
 export default Exam;

@@ -4,18 +4,22 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 function MyResults() {
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
-  // ✅ Fetch results safely on mount
   useEffect(() => {
+
     let isMounted = true;
 
     const safeFetchResults = async () => {
+
       setLoading(true);
 
       const { data: { user } } = await supabase.auth.getUser();
+
       if (!user) {
         navigate("/");
         return;
@@ -40,47 +44,94 @@ function MyResults() {
       else setResults(data || []);
 
       setLoading(false);
+
     };
 
     safeFetchResults();
 
     return () => { isMounted = false };
+
   }, [navigate]);
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 p-8">
-        <h1 className="text-3xl font-bold mb-6">My Results</h1>
 
-        {loading && <p className="text-gray-500">Loading results...</p>}
+      <div className="min-h-screen bg-gray-100 py-10 px-4">
 
-        {!loading && results.length === 0 && (
-          <p className="text-gray-600">You haven't attempted any exams yet.</p>
-        )}
+        {/* Page Container */}
+        <div className="max-w-7xl mx-auto">
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map(r => (
-            <div
-              key={r.id}
-              className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
-            >
-              <h2 className="text-xl font-semibold mb-2">
-                {r.exam_title || "Unknown Exam"}
+          {/* Page Title */}
+          <h1 className="text-4xl font-bold mb-8 text-gray-800">
+            My Exam Results
+          </h1>
+
+          {/* Loading */}
+          {loading && (
+            <div className="flex justify-center mt-20">
+              <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-500"></div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && results.length === 0 && (
+            <div className="bg-white p-10 rounded-2xl shadow text-center">
+              <h2 className="text-2xl font-semibold text-gray-700 mb-3">
+                No Results Yet
               </h2>
-              <p className="text-gray-500 text-sm mb-2">
-                Attempted on: {new Date(r.attempt_date).toLocaleString()}
-              </p>
-              <p className="text-gray-600 text-sm">
-                Exam ID: {r.exam_id}
-              </p>
-              <p className="text-gray-600 text-sm">
-                Score: {r.score}
+              <p className="text-gray-500">
+                You haven't attempted any exams yet.
               </p>
             </div>
-          ))}
+          )}
+
+          {/* Results Grid */}
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+            {results.map((r) => (
+
+              <div
+                key={r.id}
+                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-6 flex flex-col justify-between"
+              >
+
+                {/* Exam Title */}
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                  {r.exam_title || "Unknown Exam"}
+                </h2>
+
+                {/* Attempt Date */}
+                <p className="text-sm text-gray-500 mb-4">
+                  Attempted on:
+                  <br />
+                  {new Date(r.attempt_date).toLocaleString()}
+                </p>
+
+                {/* Exam ID */}
+                <p className="text-sm text-gray-600 mb-4">
+                  Exam ID: {r.exam_id}
+                </p>
+
+                {/* Score Badge */}
+                <div className="mt-auto">
+
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center py-2 rounded-xl font-semibold text-lg shadow">
+                    Score: {r.score}
+                  </div>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
         </div>
+
       </div>
+
     </>
   );
 }
