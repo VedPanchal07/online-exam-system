@@ -12,8 +12,6 @@ function MyResults() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
 
     let isMounted = true;
@@ -55,7 +53,7 @@ function MyResults() {
 
     return () => { isMounted = false };
 
-  }, [navigate]);
+  }, [redirect]);
 
   return (
     <>
