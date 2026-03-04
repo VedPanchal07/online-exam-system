@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../supabaseclient";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
 import useRedirect from "../hooks/useRedirect";

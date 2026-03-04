@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseclient";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
 import Loader from "../components/Loader";
