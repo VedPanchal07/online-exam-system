@@ -15,41 +15,50 @@ function MyResults() {
   let isMounted = true;
 
   const safeFetchResults = async () => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-      redirect("/"); // ✅ safe to call once
-      return;
+      if (!user) {
+        redirect("/"); // redirect safely
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("results")
+        .select(`
+          id,
+          score,
+          user_id,
+          attempt_date,
+          exam_id,
+          exam_title
+        `)
+        .eq("user_id", user.id)
+        .order("attempt_date", { ascending: false });
+
+      if (!isMounted) return;
+
+      if (error) {
+        console.log("Error fetching results:", error);
+        setResults([]);
+      } else {
+        setResults(data || []);
+      }
+
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setResults([]);
+    } finally {
+      if (isMounted) setLoading(false); // ✅ always stop loading
     }
-
-    const { data, error } = await supabase
-      .from("results")
-      .select(`
-        id,
-        score,
-        user_id,
-        attempt_date,
-        exam_id,
-        exam_title
-      `)
-      .eq("user_id", user.id)
-      .order("attempt_date", { ascending: false });
-
-    if (!isMounted) return;
-
-    if (error) console.log("Error fetching results:", error);
-    else setResults(data || []);
-
-    setLoading(false);
   };
 
   safeFetchResults();
 
   return () => { isMounted = false };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []); // <-- Tell ESLint to ignore redirect dependency just for this effect, since we only want to call it once on mount
+}, [redirect]);
 
   return (
     <>
@@ -68,7 +77,7 @@ function MyResults() {
           </h1>
 
           {/* Loading */}
-         {loading && results.length === 0 && (
+         {loading && (
           <div className="flex justify-center items-center mt-20">
             <Loader />
           </div>
