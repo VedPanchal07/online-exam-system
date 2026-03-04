@@ -16,8 +16,6 @@ function Dashboard() {
     avgScore: 0
   });
 
-  const navigate = useNavigate();
-
   // ✅ Animated counters
   const examsCount = useCountUp(stats.exams);
   const attemptsCount = useCountUp(stats.attempts);

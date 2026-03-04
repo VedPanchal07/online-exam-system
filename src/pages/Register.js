@@ -8,7 +8,6 @@ import RedirectLoader from "../components/RedirectLoader";
 
 function Register() {
   const { redirect, redirecting } = useRedirect();
-  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

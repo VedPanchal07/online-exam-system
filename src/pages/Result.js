@@ -7,7 +7,6 @@ import RedirectLoader from "../components/RedirectLoader";
 function Result() {
   const { redirect, redirecting } = useRedirect();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { score, total } = location.state || {};
 
