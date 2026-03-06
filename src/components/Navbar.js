@@ -33,17 +33,26 @@ function Navbar() {
   return (
     <nav className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-lg">
 
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+     <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
 
         {/* LEFT SIDE */}
         <div className="flex items-center gap-8 text-white">
 
-          <h1
-            className="text-2xl font-bold cursor-pointer tracking-wide"
+          {/* LOGO + TITLE */}
+          <div
+            className="flex items-center gap-3 cursor-pointer"
             onClick={() => navigate("/dashboard")}
           >
-            Online Exam System
-          </h1>
+            <img
+              src="/logo.png"
+              alt="Exam Vault Logo"
+              className="h-20 w-auto"
+            />
+
+            <h1 className="text-2xl font-bold tracking-wide">
+              Exam Vault
+            </h1>
+          </div>
 
           <button
             onClick={() => navigate("/dashboard")}
@@ -67,6 +76,7 @@ function Navbar() {
               Admin
             </button>
           )}
+
         </div>
 
         {/* RIGHT SIDE */}
